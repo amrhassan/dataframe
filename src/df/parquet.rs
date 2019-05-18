@@ -7,17 +7,36 @@ use crate::parquet;
 use thrift::protocol::TCompactInputProtocol;
 use crate::df::Result;
 use crate::df::DataFrameError;
+use crate::df::DataFrame;
+use std::fmt::Display;
 
-pub fn is_parquet(path: &Path) -> std::io::Result<bool> {
-    let mut fp = File::open(path)?;
+fn io_error<T: Display>(err: T) -> DataFrameError {
+    DataFrameError::IOError(format!("{}", err))
+}
+
+fn file_open(path: &Path) -> Result<File> {
+    File::open(path).map_err(io_error)
+}
+
+fn file_seek(fp: &mut File, pos: SeekFrom) -> Result<()> {
+    fp.seek(pos).map_err(io_error)?;
+    Ok(())
+}
+
+fn file_read(fp: &mut File, buff: &mut [u8]) -> Result<()> {
+    fp.read_exact(buff).map_err(io_error)
+}
+
+pub fn is_parquet(path: &Path) -> Result<bool> {
+    let fp = &mut file_open(path)?;
     let mut buff = [0; 4];
 
-    fp.read_exact(&mut buff);
+    file_read(fp, &mut buff)?;
     let header_ok = str::from_utf8(&buff).map(|v| v == "PAR1").unwrap_or(false);
 
-    fp.seek(SeekFrom::End(-4));
+    file_seek(fp, SeekFrom::End(-4))?;
     buff = [0; 4];
-    fp.read_exact(&mut buff);
+    file_read(fp, &mut buff)?;
     let footer_ok = str::from_utf8(&buff).map(|v| v == "PAR1").unwrap_or(false);
 
     Ok(header_ok && footer_ok)
@@ -25,17 +44,27 @@ pub fn is_parquet(path: &Path) -> std::io::Result<bool> {
 
 fn read_file_metadata_length(fp: &mut File) -> Result<u32> {
     let mut buff = [0; 4];
-    fp.seek(SeekFrom::End(-8));
-    fp.read_exact(&mut buff);
+    file_seek(fp, SeekFrom::End(-8))?;
+    file_read(fp, &mut buff)?;
     Ok(u32::from_le_bytes(buff))
 }
 
-pub fn file_metadata(path: &Path) -> Result<parquet::FileMetaData> {
-    let mut fp = File::open(path).map_err(|err| DataFrameError::IOError(format!("{}", err)))?;
+fn read_file_metadata(path: &Path) -> Result<parquet::FileMetaData> {
+    let mut fp = &mut file_open(path)?;
 
     let file_metadata_length = read_file_metadata_length(&mut fp)?;
-    fp.seek(SeekFrom::End(-8 - file_metadata_length as i64));
+    file_seek(fp, SeekFrom::End(-8 - file_metadata_length as i64))?;
 
-    let mut protocol = TCompactInputProtocol::new(&fp);
-    parquet::FileMetaData::read_from_in_protocol(&mut protocol).map_err(|err| DataFrameError::CorruptedFile(format!("{}", err)))
+    let protocol = &mut TCompactInputProtocol::new(fp);
+    parquet::FileMetaData::read_from_in_protocol(protocol)
+        .map_err(|err| DataFrameError::CorruptedFile(format!("{}", err)))
+}
+
+pub fn read(path: &Path) -> Result<DataFrame> {
+    let file_metadata = read_file_metadata(path)?;
+    let df = DataFrame {
+        rows: file_metadata.num_rows as u64
+    };
+
+    Ok(df)
 }

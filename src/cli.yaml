@@ -1,0 +1,22 @@
+name: data
+about: Introspecting common data files
+
+settings:
+    - ArgRequiredElseHelp
+    - SubcommandRequiredElseHelp
+    - ArgRequiredElseHelp
+    - ColorAuto
+    - DisableVersion
+    - UnifiedHelpMessage
+    - VersionlessSubcommands 
+    - DisableHelpSubcommand
+
+subcommands:
+    - size:
+        about: The number of rows in the data file
+        args:
+          - FILE:
+              help: The file path
+              required: true
+              index: 1
+ 
