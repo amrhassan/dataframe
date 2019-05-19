@@ -12,8 +12,8 @@ settings:
     - DisableHelpSubcommand
 
 subcommands:
-    - size:
-        about: The size of the DataFrame as (rows x columns)
+    - rows:
+        about: The number of rows in the DataFrame
         args:
           - PATH:
               help: The file path

@@ -1,29 +1,10 @@
 use crate::df::*;
 use crate::parquet;
-use std::fmt::Display;
 use std::fs::File;
-use std::io::prelude::*;
 use std::io::SeekFrom;
 use std::path::Path;
 use std::str;
 use thrift::protocol::TCompactInputProtocol;
-
-fn io_error<T: Display>(err: T) -> DataFrameError {
-    DataFrameError::IOError(format!("{}", err))
-}
-
-fn file_open(path: &Path) -> Result<File> {
-    File::open(path).map_err(io_error)
-}
-
-fn file_seek(fp: &mut File, pos: SeekFrom) -> Result<()> {
-    fp.seek(pos).map_err(io_error)?;
-    Ok(())
-}
-
-fn file_read(fp: &mut File, buff: &mut [u8]) -> Result<()> {
-    fp.read_exact(buff).map_err(io_error)
-}
 
 pub fn is_parquet(path: &Path) -> Result<bool> {
     let fp = &mut file_open(path)?;
@@ -67,11 +48,8 @@ impl<'a> DataFrame for ParquetDataFrame<'a> {
         Format::Parquet
     }
 
-    fn size(&self) -> Result<Size> {
+    fn row_count(&self) -> Result<u64> {
         let md = read_file_metadata(self.path)?;
-        Ok(Size {
-            rows: md.num_rows as u64,
-            columns: md.schema.iter().filter(|elem| elem.type_.is_some()).count() as u64,
-        })
+        Ok(md.num_rows as u64)
     }
 }

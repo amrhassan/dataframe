@@ -1,12 +1,18 @@
 pub mod avro;
 pub mod parquet;
 
+mod utils;
+
+use crate::avrofile::AvroFileError;
 use std::fmt;
 use std::path::Path;
+use utils::*;
 
+#[derive(Debug)]
 pub enum DataFrameError {
     IOError(String),
     CorruptedFile(String),
+    AvroError(AvroFileError),
     UnsupportedFormat,
 }
 
@@ -15,11 +21,6 @@ pub type Result<A> = std::result::Result<A, DataFrameError>;
 pub enum Format {
     Parquet,
     Avro,
-}
-
-pub struct Size {
-    pub rows: u64,
-    pub columns: u64,
 }
 
 impl fmt::Display for Format {
@@ -33,7 +34,7 @@ impl fmt::Display for Format {
 
 pub trait DataFrame {
     fn format(&self) -> Format;
-    fn size(&self) -> Result<Size>;
+    fn row_count(&self) -> Result<u64>;
 }
 
 pub fn data_frame<'a>(path: &'a Path) -> Result<Box<'a + DataFrame>> {

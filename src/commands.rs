@@ -3,8 +3,7 @@ use std::path::Path;
 
 pub fn size(path: &Path) -> Result<()> {
     let df = crate::df::data_frame(path)?;
-    let size = df.size()?;
-    println!("{}x{}", size.rows, size.columns);
+    println!("{}", df.row_count()?);
     Ok(())
 }
 

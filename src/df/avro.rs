@@ -1,9 +1,14 @@
+use crate::avrofile::AvroFile;
 use crate::df::*;
 use std::path::Path;
+use utils::*;
 
 pub fn is_avro(path: &Path) -> Result<bool> {
-    // TODO
-    Ok(false)
+    let mut fp = file_open(path)?;
+    let mut buff = [0; 4];
+    file_read(&mut fp, &mut buff)?;
+
+    Ok(buff == [0x4F, 0x62, 0x6A, 0x01])
 }
 
 pub struct AvroDataFrame<'a> {
@@ -14,8 +19,11 @@ impl<'a> DataFrame for AvroDataFrame<'a> {
     fn format(&self) -> Format {
         Format::Avro
     }
-    fn size(&self) -> Result<Size> {
-        // TODO
-        Err(DataFrameError::UnsupportedFormat)
+
+    fn row_count(&self) -> Result<u64> {
+        let blocks = AvroFile::read(self.path)
+            .map_err(DataFrameError::AvroError)?
+            .blocks;
+        Ok(blocks.into_iter().map(|block| block.object_count).sum())
     }
 }
