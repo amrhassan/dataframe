@@ -3,6 +3,8 @@ name = "dataframe"
 version = "0.1.0-alpha"
 authors = ["Amr Hassan <amr.hassan@gmail.com>"]
 edition = "2018"
+description = "CLI for introspecting data frames (Avro, Parquet)"
+license = "MIT"
 
 [dependencies]
 ordered-float = "1.0.2"
