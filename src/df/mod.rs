@@ -1,8 +1,8 @@
 pub mod parquet;
+pub mod avro;
 
 use std::path::Path;
 
-#[derive(Debug)]
 pub enum DataFrameError {
     IOError(String),
     CorruptedFile(String),
@@ -11,16 +11,16 @@ pub enum DataFrameError {
 
 pub type Result<A> = std::result::Result<A, DataFrameError>;
 
-pub struct DataFrame {
-    pub rows: u64,
+pub trait DataFrame {
+    fn row_count(&self) -> Result<u64>;
 }
 
-impl DataFrame {
-    pub fn read(path: &Path) -> Result<DataFrame> {
-        if parquet::is_parquet(path)? {
-            return parquet::read(path)
-        } else {
-            Err(DataFrameError::UnsupportedFormat)
-        }
+pub fn data_frame<'a>(path: &'a Path) -> Result<Box<'a + DataFrame>> {
+    if parquet::is_parquet(path)? {
+        return Ok(Box::new(parquet::ParquetDataFrame { path }))
+    } else if avro::is_avro(path)? {
+        return Ok(Box::new(avro::AvroDataFrame { path }))
+    } else {
+        Err(DataFrameError::UnsupportedFormat)
     }
 }

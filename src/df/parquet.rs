@@ -5,9 +5,7 @@ use std::fs::File;
 use std::str;
 use crate::parquet;
 use thrift::protocol::TCompactInputProtocol;
-use crate::df::Result;
-use crate::df::DataFrameError;
-use crate::df::DataFrame;
+use crate::df::*;
 use std::fmt::Display;
 
 fn io_error<T: Display>(err: T) -> DataFrameError {
@@ -60,11 +58,12 @@ fn read_file_metadata(path: &Path) -> Result<parquet::FileMetaData> {
         .map_err(|err| DataFrameError::CorruptedFile(format!("{}", err)))
 }
 
-pub fn read(path: &Path) -> Result<DataFrame> {
-    let file_metadata = read_file_metadata(path)?;
-    let df = DataFrame {
-        rows: file_metadata.num_rows as u64
-    };
+pub struct ParquetDataFrame<'a> {
+    pub path: &'a Path
+}
 
-    Ok(df)
+impl <'a> DataFrame for ParquetDataFrame<'a> {
+    fn row_count(&self) -> Result<u64> {
+        read_file_metadata(self.path).map(|md| md.num_rows as u64)
+    }
 }
