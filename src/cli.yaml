@@ -15,8 +15,14 @@ subcommands:
     - size:
         about: The number of rows in the data file
         args:
-          - FILE:
+          - PATH:
               help: The file path
               required: true
               index: 1
- 
+    - format:
+        about: The format of the data file
+        args:
+          - PATH:
+              help: The file path
+              required: true
+              index: 1

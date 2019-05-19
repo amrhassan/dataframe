@@ -1,12 +1,12 @@
-use std::path::Path;
+use crate::df::*;
+use crate::parquet;
+use std::fmt::Display;
+use std::fs::File;
 use std::io::prelude::*;
 use std::io::SeekFrom;
-use std::fs::File;
+use std::path::Path;
 use std::str;
-use crate::parquet;
 use thrift::protocol::TCompactInputProtocol;
-use crate::df::*;
-use std::fmt::Display;
 
 fn io_error<T: Display>(err: T) -> DataFrameError {
     DataFrameError::IOError(format!("{}", err))
@@ -59,10 +59,13 @@ fn read_file_metadata(path: &Path) -> Result<parquet::FileMetaData> {
 }
 
 pub struct ParquetDataFrame<'a> {
-    pub path: &'a Path
+    pub path: &'a Path,
 }
 
-impl <'a> DataFrame for ParquetDataFrame<'a> {
+impl<'a> DataFrame for ParquetDataFrame<'a> {
+    fn format(&self) -> Format {
+        Format::Parquet
+    }
     fn row_count(&self) -> Result<u64> {
         read_file_metadata(self.path).map(|md| md.num_rows as u64)
     }

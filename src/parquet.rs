@@ -2,7 +2,7 @@
 // DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 
 #![allow(unused_imports)]
-#![allow(dead_code)] 
+#![allow(dead_code)]
 #![allow(unused_extern_crates)]
 #![cfg_attr(feature = "cargo-clippy", allow(too_many_arguments, type_complexity))]
 #![cfg_attr(rustfmt, rustfmt_skip)]

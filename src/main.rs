@@ -1,10 +1,10 @@
 #[macro_use]
 extern crate clap;
 
-mod parquet;
-mod df;
 mod cli;
 mod commands;
+mod df;
+mod parquet;
 
 fn main() {
     cli::run()
