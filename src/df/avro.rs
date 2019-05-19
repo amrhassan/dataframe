@@ -14,7 +14,7 @@ impl<'a> DataFrame for AvroDataFrame<'a> {
     fn format(&self) -> Format {
         Format::Avro
     }
-    fn row_count(&self) -> Result<u64> {
+    fn size(&self) -> Result<Size> {
         // TODO
         Err(DataFrameError::UnsupportedFormat)
     }

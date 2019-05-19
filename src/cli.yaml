@@ -13,7 +13,7 @@ settings:
 
 subcommands:
     - size:
-        about: The number of rows in the data file
+        about: The size of the DataFrame as (rows x columns)
         args:
           - PATH:
               help: The file path

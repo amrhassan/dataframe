@@ -66,7 +66,12 @@ impl<'a> DataFrame for ParquetDataFrame<'a> {
     fn format(&self) -> Format {
         Format::Parquet
     }
-    fn row_count(&self) -> Result<u64> {
-        read_file_metadata(self.path).map(|md| md.num_rows as u64)
+
+    fn size(&self) -> Result<Size> {
+        let md = read_file_metadata(self.path)?;
+        Ok(Size {
+            rows: md.num_rows as u64,
+            columns: md.schema.iter().filter(|elem| elem.type_.is_some()).count() as u64,
+        })
     }
 }

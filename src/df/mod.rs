@@ -17,6 +17,11 @@ pub enum Format {
     Avro,
 }
 
+pub struct Size {
+    pub rows: u64,
+    pub columns: u64,
+}
+
 impl fmt::Display for Format {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
@@ -28,7 +33,7 @@ impl fmt::Display for Format {
 
 pub trait DataFrame {
     fn format(&self) -> Format;
-    fn row_count(&self) -> Result<u64>;
+    fn size(&self) -> Result<Size>;
 }
 
 pub fn data_frame<'a>(path: &'a Path) -> Result<Box<'a + DataFrame>> {
