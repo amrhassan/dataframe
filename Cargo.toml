@@ -1,6 +1,6 @@
 [package]
-name = "data"
-version = "0.1.0"
+name = "dataframe"
+version = "0.1.0-alpha"
 authors = ["Amr Hassan <amr.hassan@gmail.com>"]
 edition = "2018"
 
