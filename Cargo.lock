@@ -107,7 +107,7 @@ dependencies = [
 
 [[package]]
 name = "dataframe"
-version = "0.2.0"
+version = "0.2.1-alpha.0"
 dependencies = [
  "avro-rs 0.6.5 (git+https://github.com/amrhassan/avro-rs.git)",
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
