@@ -1,4 +1,4 @@
-use crate::avrofile::AvroFile;
+use crate::avrofile::FileMetadata;
 use crate::df::*;
 use std::path::Path;
 use utils::*;
@@ -21,7 +21,7 @@ impl<'a> DataFrame for AvroDataFrame<'a> {
     }
 
     fn row_count(&self) -> Result<u64> {
-        let blocks = AvroFile::read(self.path)
+        let blocks = FileMetadata::read(self.path)
             .map_err(DataFrameError::AvroError)?
             .blocks;
         Ok(blocks.into_iter().map(|block| block.object_count).sum())
