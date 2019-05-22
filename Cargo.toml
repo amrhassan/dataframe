@@ -1,15 +1,14 @@
 [package]
-name = "dataframe"
+name = "dataset"
 version = "0.2.1-alpha.0"
 authors = ["Amr Hassan <amr.hassan@gmail.com>"]
 edition = "2018"
-description = "CLI for introspecting data frames (Avro, Parquet)"
+description = "CLI for introspecting datasets (Avro, Parquet)"
 license = "MIT"
-publish = false
 
 [dependencies]
-ordered-float = "1.0.2"
-thrift = "0.12.0"
-try_from = "0.3.2"
+ordered-float = "1.0"
+thrift = "0.12"
+try_from = "0.3"
 clap = {version = "2.33", features = ["yaml"]}
 avro-rs = { git = "https://github.com/amrhassan/avro-rs.git" }
