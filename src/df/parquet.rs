@@ -1,5 +1,5 @@
 use crate::df::*;
-use crate::parquet;
+use crate::parquetfile::FileMetaData;
 use std::fs::File;
 use std::io::SeekFrom;
 use std::path::Path;
@@ -35,7 +35,7 @@ fn read_file_metadata(path: &Path) -> Result<parquet::FileMetaData> {
     file_seek(fp, SeekFrom::End(-8 - file_metadata_length as i64))?;
 
     let protocol = &mut TCompactInputProtocol::new(fp);
-    parquet::FileMetaData::read_from_in_protocol(protocol)
+    FileMetaData::read_from_in_protocol(protocol)
         .map_err(|err| DataFrameError::CorruptedFile(format!("{}", err)))
 }
 

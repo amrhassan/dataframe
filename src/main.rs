@@ -5,7 +5,7 @@ mod avrofile;
 mod cli;
 mod commands;
 mod df;
-mod parquet;
+mod parquetfile;
 
 fn main() {
     cli::run()
