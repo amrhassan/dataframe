@@ -1,10 +1,7 @@
-name: dataframe
-about: Introspecting common data files
+name: Dataset introspection CLI
 
 settings:
-    - ArgRequiredElseHelp
     - SubcommandRequiredElseHelp
-    - ArgRequiredElseHelp
     - ColorAuto
     - DisableVersion
     - UnifiedHelpMessage
@@ -13,14 +10,14 @@ settings:
 
 subcommands:
     - rows:
-        about: The number of rows in the DataFrame
+        about: The number of rows in the dataset
         args:
           - PATH:
               help: The file path
               required: true
               index: 1
     - format:
-        about: The format of the data file
+        about: The format of the dataset
         args:
           - PATH:
               help: The file path
