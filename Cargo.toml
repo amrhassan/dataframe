@@ -11,4 +11,4 @@ ordered-float = "1.0"
 thrift = "0.12"
 try_from = "0.3"
 clap = {version = "2.33", features = ["yaml"]}
-avro-rs = { git = "https://github.com/amrhassan/avro-rs.git" }
+avro-rs = "0.6"
