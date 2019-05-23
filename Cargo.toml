@@ -7,11 +7,10 @@ description = "CLI for introspecting datasets (Avro, Parquet)"
 license = "MIT"
 
 [dependencies]
-ordered-float = "1.0"
-thrift = "0.12"
-try_from = "0.3"
+thrift = "0.0.4"
 clap = {version = "2.33", features = ["yaml"]}
 avro-rs = "0.6"
+parquet-format = "2.5"
 
 [dev-dependencies]
 assert_cmd = "0.11"
