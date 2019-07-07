@@ -4,7 +4,7 @@ extern crate clap;
 mod avrofile;
 mod cli;
 mod commands;
-mod df;
+mod ds;
 
 fn main() {
     cli::run()
