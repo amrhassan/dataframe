@@ -16,12 +16,13 @@ pub fn run() {
     }
 }
 
-fn fail(err: DataFrameError) {
+fn fail(err: DatasetError) {
     let message = match err {
-        DataFrameError::UnsupportedFormat => "Unsupported file format".to_owned(),
-        DataFrameError::IOError(s) => format!("IO Error: {}", s),
-        DataFrameError::CorruptedFile(s) => format!("Corrupted file: {}", s),
-        DataFrameError::AvroError(s) => format!("Avro error: {:?}", s),
+        DatasetError::UnsupportedFormat => "Unsupported file format".to_owned(),
+        DatasetError::IOError(s) => format!("IO Error: {}", s),
+        DatasetError::CorruptedFile(s) => format!("Corrupted file: {}", s),
+        DatasetError::AvroError(s) => format!("Avro error: {:?}", s),
+        DatasetError::ParquetError(s) => format!("Parquet error: {:?}", s),
     };
     eprintln!("{}", message);
     std::process::exit(1);

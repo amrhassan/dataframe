@@ -7,7 +7,7 @@ use io::*;
 
 use avro_rs::{types::Value, Schema};
 use std::fs::File;
-use std::io::SeekFrom;
+use std::io::{SeekFrom, Read, Seek};
 use std::path::Path;
 
 /// The metadata of an Avro Object Container File
@@ -19,10 +19,10 @@ pub struct FileMetadata {
 
 impl FileMetadata {
     pub fn read(path: &Path) -> Result<FileMetadata> {
-        let mut fp = file_open(path)?;
+        let mut fp = File::open(path)?;
 
         // Seek past the magic number
-        file_seek(&mut fp, SeekFrom::Start(4))?;
+        fp.seek(SeekFrom::Start(4))?;
 
         // Seek past the metadata
         let metadata_schema = Schema::Map(Box::new(Schema::Bytes));
@@ -30,7 +30,7 @@ impl FileMetadata {
             .unwrap_or(Err(AvroFileError::corrupted("Failed to decode file metadata")))?;
 
         // Seek past the sync marker
-        file_seek(&mut fp, SeekFrom::Current(16))?;
+        fp.seek(SeekFrom::Current(16))?;
 
         let blocks = AvroBlockMetadataIterator::collect(&mut fp)?;
 
@@ -63,17 +63,25 @@ impl<'a> Iterator for AvroBlockMetadataIterator<'a> {
 
 impl<'a> AvroBlockMetadataIterator<'a> {
     fn next_result(&mut self, object_count: i64, data_length: i64) -> Result<AvroBlockMetadata> {
-        let offset = file_seek(self.fp, SeekFrom::Current(0))?;
+        let offset = self.fp.seek(SeekFrom::Current(0))?;
         let block = AvroBlockMetadata {
             data_offset: offset,
             data_length: data_length as u64,
             object_count: object_count as u64,
         };
-        file_seek(self.fp, SeekFrom::Current(data_length + 16))?;
+        self.fp.seek(SeekFrom::Current(data_length + 16))?;
         Ok(block)
     }
 
     fn collect(fp: &mut File) -> Result<Vec<AvroBlockMetadata>> {
         AvroBlockMetadataIterator { fp }.collect()
     }
+}
+
+pub fn is_avro(path: &Path) -> Result<bool> {
+    let mut fp = File::open(path)?;
+    let mut buff = [0; 4];
+    fp.read_exact(&mut buff)?;
+
+    Ok(buff == [0x4F, 0x62, 0x6A, 0x01])
 }

@@ -2,13 +2,13 @@ use crate::ds::*;
 use std::path::Path;
 
 pub fn size(path: &Path) -> Result<()> {
-    let df = crate::ds::data_frame(path)?;
-    println!("{}", df.row_count()?);
+    let ds = crate::ds::dataset(path)?;
+    println!("{}", ds.row_count()?);
     Ok(())
 }
 
 pub fn format(path: &Path) -> Result<()> {
-    let df = crate::ds::data_frame(path)?;
-    println!("{}", df.format());
+    let ds = crate::ds::dataset(path)?;
+    println!("{}", ds.format());
     Ok(())
 }

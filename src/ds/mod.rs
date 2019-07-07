@@ -1,22 +1,15 @@
 pub mod avro;
 pub mod parquet;
 
-mod utils;
+mod error;
 
-use crate::avrofile::AvroFileError;
 use std::fmt;
 use std::path::Path;
-use utils::*;
+use crate::parquetfile;
+use crate::avrofile;
 
-#[derive(Debug)]
-pub enum DataFrameError {
-    IOError(String),
-    CorruptedFile(String),
-    AvroError(AvroFileError),
-    UnsupportedFormat,
-}
-
-pub type Result<A> = std::result::Result<A, DataFrameError>;
+pub use error::DatasetError;
+pub use error::Result;
 
 pub enum Format {
     Parquet,
@@ -32,17 +25,17 @@ impl fmt::Display for Format {
     }
 }
 
-pub trait DataFrame {
+pub trait Dataset {
     fn format(&self) -> Format;
     fn row_count(&self) -> Result<u64>;
 }
 
-pub fn data_frame<'a>(path: &'a Path) -> Result<Box<'a + DataFrame>> {
-    if parquet::is_parquet(path)? {
-        Ok(Box::new(parquet::ParquetDataFrame { path }))
-    } else if avro::is_avro(path)? {
-        Ok(Box::new(avro::AvroDataFrame { path }))
+pub fn dataset<'a>(path: &'a Path) -> Result<Box<'a + Dataset>> {
+    if parquetfile::is_parquet(path)? {
+        Ok(Box::new(parquet::ParquetDataset { path }))
+    } else if avrofile::is_avro(path)? {
+        Ok(Box::new(avro::AvroDataset { path }))
     } else {
-        Err(DataFrameError::UnsupportedFormat)
+        Err(DatasetError::UnsupportedFormat)
     }
 }

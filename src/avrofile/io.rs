@@ -1,16 +1,6 @@
 use super::error::*;
 use avro_rs::{from_avro_datum, types::Value, Schema};
-use std::fs::File;
-use std::io::{ErrorKind, Read, Seek, SeekFrom};
-use std::path::Path;
-
-pub fn file_open(path: &Path) -> Result<File> {
-    File::open(path).map_err(AvroFileError::from)
-}
-
-pub fn file_seek(fp: &mut File, pos: SeekFrom) -> Result<u64> {
-    fp.seek(pos).map_err(AvroFileError::from)
-}
+use std::io::{ErrorKind, Read};
 
 /// Decode a value out of the byte stream if not EOF, otherwise return None
 pub fn decode<R: Read>(schema: &Schema, reader: &mut R) -> Option<Result<Value>> {
