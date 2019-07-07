@@ -3,16 +3,10 @@ use std::fmt::Display;
 
 pub type Result<A> = std::result::Result<A, AvroFileError>;
 
-#[derive(Debug)]
+#[derive(Debug, From)]
 pub enum AvroFileError {
     CorruptedFile(String),
     IOError(io::Error),
-}
-
-impl From<io::Error> for AvroFileError {
-    fn from(err: io::Error) -> AvroFileError {
-        AvroFileError::IOError(err)
-    }
 }
 
 impl AvroFileError {

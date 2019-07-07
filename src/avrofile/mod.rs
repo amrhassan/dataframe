@@ -85,3 +85,8 @@ pub fn is_avro(path: &Path) -> Result<bool> {
 
     Ok(buff == [0x4F, 0x62, 0x6A, 0x01])
 }
+
+pub fn row_count(path: &Path) -> Result<u64> {
+    let blocks = FileMetadata::read(path)?.blocks;
+    Ok(blocks.into_iter().map(|block| block.object_count).sum())
+}

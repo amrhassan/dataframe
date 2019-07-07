@@ -11,6 +11,7 @@ thrift = "0.0.4"
 clap = {version = "2.33", features = ["yaml"]}
 avro-rs = "0.6"
 parquet-format = "2.5"
+derive_more = "0.15"
 
 [dev-dependencies]
 assert_cmd = "0.11"
