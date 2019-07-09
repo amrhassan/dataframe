@@ -1,7 +1,7 @@
 # dataset #
 [![Build Status](https://travis-ci.com/amrhassan/dataset.svg?branch=master)](https://travis-ci.com/amrhassan/dataset)
 
-Dataset introspection CLI
+Dataset inspection CLI
 
 ## Supported dataset formats ##
   * Avro
